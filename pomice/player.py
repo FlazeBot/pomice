@@ -329,14 +329,14 @@ class Player(VoiceProtocol):
         self._voice_state.update({"sessionId": data.get("session_id")})
 
         channel_id = data.get("channel_id")
-        if not channel_id:
-            await self.disconnect()
+        if channel_id is None:
+            await self.destroy()
             self._voice_state.clear()
             return
 
         channel = self.guild.get_channel(int(channel_id))
         if not channel:
-            await self.disconnect()
+            await self.destroy()
             self._voice_state.clear()
             return
 
@@ -347,6 +347,10 @@ class Player(VoiceProtocol):
 
     async def _dispatch_event(self, data: dict) -> None:
         event_type: str = data["type"]
+
+        if event_type == "WebSocketClosedEvent":
+            return await self.destroy()
+
         event: PomiceEvent = getattr(events, event_type)(data, self)
 
         if isinstance(event, TrackEndEvent) and event.reason != "REPLACED":
@@ -458,7 +462,7 @@ class Player(VoiceProtocol):
     async def destroy(self) -> None:
         """Disconnects and destroys the player, and runs internal cleanup."""
         try:
-            await self.disconnect()
+            await self.disconnect(force=False)
         except AttributeError:
             # 'NoneType' has no attribute '_get_voice_client_key' raised by self.cleanup() ->
             # assume we're already disconnected and cleaned up
