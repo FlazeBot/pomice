@@ -465,6 +465,7 @@ class Player(VoiceProtocol):
         finally:
             self.cleanup()
             self._is_connected = False
+            self.channel = None  # type: ignore
 
     async def destroy(self) -> None:
         """Disconnects and destroys the player, and runs internal cleanup."""
