@@ -353,7 +353,7 @@ class Player(VoiceProtocol):
 
         event: PomiceEvent = getattr(events, event_type)(data, self)
 
-        if isinstance(event, TrackEndEvent) and event.reason != "REPLACED":
+        if isinstance(event, TrackEndEvent) and event.reason not in ("REPLACED", "replaced"):
             self._current = None
 
         event.dispatch(self._bot)
