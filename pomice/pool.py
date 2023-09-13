@@ -414,7 +414,7 @@ class Node:
 
         uri: str = (
             f"{self._rest_uri}/"
-            f'{f"v3/" if include_version else ""}'
+            f'{f"v{self._version.major}/" if include_version else ""}'
             f"{path}"
             f'{f"/{guild_id}" if guild_id else ""}'
             f'{f"?{query}" if query else ""}'
@@ -482,7 +482,7 @@ class Node:
                 )
 
             self._websocket = await client.connect(
-                f"{self._websocket_uri}/v3/websocket",
+                f"{self._websocket_uri}/v{self._version.major}/websocket",
                 extra_headers=self._headers,
                 ping_interval=self._heartbeat,
             )
@@ -494,7 +494,7 @@ class Node:
                         await player._refresh_endpoint_uri(self._session_id)
 
             self._log.debug(
-                f"Node {self._identifier} successfully connected to websocket using {self._websocket_uri}/v3/websocket",
+                f"Node {self._identifier} successfully connected to websocket using {self._websocket_uri}/v{self._version.major}/websocket",
             )
 
             if not self._task:
