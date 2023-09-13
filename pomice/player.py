@@ -470,7 +470,7 @@ class Player(VoiceProtocol):
     async def destroy(self) -> None:
         """Disconnects and destroys the player, and runs internal cleanup."""
         try:
-            await self.disconnect(force=False)
+            await self.disconnect()
         except AttributeError:
             # 'NoneType' has no attribute '_get_voice_client_key' raised by self.cleanup() ->
             # assume we're already disconnected and cleaned up
