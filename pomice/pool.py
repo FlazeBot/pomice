@@ -831,16 +831,27 @@ class Node:
             )
 
         elif load_type in ("SEARCH_RESULT", "TRACK_LOADED", "track", "search"):
+            if isinstance(data[data_type], list):
+                return [
+                    Track(
+                        track_id=track["encoded"],
+                        info=track["info"],
+                        ctx=ctx,
+                        track_type=TrackType(track["info"]["sourceName"]),
+                        filters=filters,
+                        timestamp=timestamp,
+                    )
+                    for track in data[data_type]
+                ]
             return [
                 Track(
-                    track_id=track["encoded"],
-                    info=track["info"],
+                    track_id=data[data_type]["encoded"],
+                    info=data[data_type]["info"],
                     ctx=ctx,
-                    track_type=TrackType(track["info"]["sourceName"]),
+                    track_type=TrackType(data[data_type]["info"]["sourceName"]),
                     filters=filters,
                     timestamp=timestamp,
                 )
-                for track in data[data_type]
             ]
 
         else:
